@@ -31,6 +31,6 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new FaviconsWebpackPlugin("./src/favicon.ico"),
+    new FaviconsWebpackPlugin('./src/favicon.ico')
   ]
 }
