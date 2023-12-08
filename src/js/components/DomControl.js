@@ -12,7 +12,8 @@ export default class DomControl {
     this.addMenu = new AddMenu()
     this.lazy = new LazyLoader()
     this.listeners()
-    this.getMessages()
+    this.getMessages(true)
+
   }
 
   listeners () {
@@ -31,8 +32,8 @@ export default class DomControl {
       messageForm.append('message', event.target.value)
       fetch(this.host + '/messages', { method: 'POST', body: messageForm })
         .then(() => {
-          this.clearMessages()
-          this.getMessages(true)
+
+          this.getLastMessage()
         })
 
       event.target.value = ''
@@ -43,19 +44,25 @@ export default class DomControl {
     fetch(this.host + '/messages')
       .then((response) => response.json())
       .then((response) => {
-        console.log(response.news)
-        if (scroll) {
-          response.news.forEach((message) => { drawMessage(message, this.bot, scroll) })
-          return
-        }
-        this.lazy.addMessages(response.news)
+        console.log(response.messages)
+        this.lazy.addMessages(response.messages)
         const dataForDraw = this.lazy.getMessages()
-        dataForDraw.forEach((message) => { drawMessage(message, this.bot) })
+        dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
       })
       .catch((error) => {
         console.log(error)
       })
   }
+
+  getLastMessage = () => {
+    fetch(this.host + '/messages/last')
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.messages)
+        drawMessage(response.messages, this.bot, true)
+      })
+  }
+
 
   clearMessages () {
     [...this.bot.children].forEach(element => element.remove())
@@ -89,18 +96,17 @@ export default class DomControl {
 
     fetch(this.host + '/messages', { method: 'POST', body: data })
       .then((response) => {
-        this.clearMessages()
-        this.getMessages(true)
+        this.getLastMessage()
       })
   }
 
   lazyLoad = () => {
     try {
-      const lastElement = this.bot.children[this.bot.children.length - 1].offsetTop
-      const currentY = this.bot.scrollTop + this.bot.clientHeight
-
-      if ((lastElement - 200) < currentY) {
-        this.lazy.getMessages().forEach(message => { if (message) { drawMessage(message, this.bot, false) } })
+      const lastElement = this.bot.children[1].offsetTop
+      const currentY = this.bot.scrollTop 
+      // console.log((lastElement + 200), currentY );
+      if ((lastElement + 200) > currentY) {
+        this.lazy.getMessages().forEach(message => { if (message) { drawMessage(message, this.bot, false, true) } })
       }
     } catch (err) {
 

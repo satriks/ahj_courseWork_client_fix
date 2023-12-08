@@ -1,6 +1,6 @@
 import convertTimestampToDate from '../supportComponents/convertTimestamp'
 
-export default function drawMessage (data, bot, scroll = false) {
+export default function drawMessage (data, bot, scroll = false, history = false) {
   if (data) {
     // console.log(data);
     const message = document.createElement('div')
@@ -39,13 +39,17 @@ export default function drawMessage (data, bot, scroll = false) {
     messageTime.textContent = convertTimestampToDate(data.date)
 
     message.append(messageContent, messageTime)
-
-    bot.append(message)
+    if (history) {
+      console.log("Отрисовка вначале");
+      bot.insertAdjacentElement('afterbegin', message)
+    }
+    else {bot.append(message)}
+  
     if (scroll) {
       // console.log(43);
       // console.log(bot.children[bot.children.length - 1]);
       // bot.children[bot.children.length - 1].scrollIntoView(true)
-      setTimeout(message.scrollIntoView(true), 300)
+      setTimeout(() => bot.lastChild.scrollIntoView(true), 300)
     }
   }
 }
