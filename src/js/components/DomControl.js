@@ -2,6 +2,7 @@ import createDom from './Items/StartDom'
 import drawMessage from './Items/drawMessage'
 import AddMenu from './Items/addMenu'
 import LazyLoader from './Items/lazyLoader'
+// import WebSocket from './Items/WebSocket'
 
 export default class DomControl {
   constructor (host) {
@@ -13,16 +14,21 @@ export default class DomControl {
     this.lazy = new LazyLoader()
     this.listeners()
     this.getMessages(true)
+    console.log("wss:" +  host.split(":")[1] + "?test=test");
+    this.ws = new WebSocket("wss" +  host.split(":")[1] + "?test=test")
+    this.ws.addEventListener('message', (message) => {console.log(message);})
+    
 
   }
 
-  listeners () {
+  listeners = () => {
     this.input.addEventListener('keydown', this.inputMessage)
     document.querySelector('.bot__add').addEventListener('click', this.handleAddMenu)
     document.querySelector('.bot__input-file').addEventListener('change', this.catchFile)
     this.bot.addEventListener('dragover', (event) => { event.preventDefault() })
     this.bot.addEventListener('drop', this.onDrop)
     this.bot.addEventListener('scroll', this.lazyLoad)
+    // this.ws = new WebSocket(this.host)
   }
 
   inputMessage = (event) => {
