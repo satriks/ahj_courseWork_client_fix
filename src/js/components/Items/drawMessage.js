@@ -5,40 +5,51 @@ export default function drawMessage (data, bot, scroll = false, history = false)
     // console.log(data);
     const message = document.createElement('div')
     message.className = 'message'
+
+    const fileText = document.createElement('span')
+    fileText.className = 'message__text'
+    fileText.textContent = data.text
+
     let messageContent = document.createElement('span')
 
     if (data.type && data.type.startsWith('image')) {
       messageContent = document.createElement('img')
-      messageContent.src = data.message
+      messageContent.src = data.file
     }
 
     if (data.type && data.type.startsWith('video')) {
       messageContent = document.createElement('video')
-      messageContent.src = data.message
+      messageContent.src = data.file
       messageContent.setAttribute('controls', 'controls')
     }
 
     if (data.type && data.type.startsWith('audio')) {
       messageContent = document.createElement('audio')
-      messageContent.src = data.message
+      messageContent.src = data.file
       messageContent.setAttribute('controls', 'controls')
-    } else {
-      const links = data.message.match(/http[^\s]+/gm)
+    } 
+
+    
+    else {
+      const links = data.text.match(/http[^\s]+/gm)
       if (links) {
         for (const link of links) {
-          data.message = data.message.replace(link, `<a href="${link}">${link}</a>`)
+          data.text = data.text.replace(link, `<a href="${link}">${link}</a>`)
         }
       }
-      messageContent.innerHTML = `<span>${data.message}</span>`
+      messageContent.innerHTML = `<span>${data.text}</span>`
     }
 
     messageContent.className = 'message__content'
-
+    
     const messageTime = document.createElement('span')
     messageTime.className = 'message__time'
     messageTime.textContent = convertTimestampToDate(data.date)
 
-    message.append(messageContent, messageTime)
+    console.log(data.type);
+
+    data.type ? message.append(messageContent, fileText, messageTime) : message.append(messageContent, messageTime)
+
     if (history) {
       console.log("Отрисовка вначале");
       bot.insertAdjacentElement('afterbegin', message)

@@ -2,6 +2,7 @@ const path = require('path')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
   devtool: 'source-map',
@@ -31,6 +32,10 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new FaviconsWebpackPlugin('./src/favicon.ico')
+    new FaviconsWebpackPlugin('./src/favicon.ico'),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+   }),
+
   ]
 }
