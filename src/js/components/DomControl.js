@@ -4,6 +4,7 @@ import AddMenu from './Items/addMenu'
 import LazyLoader from './Items/lazyLoader'
 import UpMenu from './Items/UpMenu'
 import captureFile from './Items/captureFile'
+import CategoryInterface from './Items/CategoryInterface'
 import { getGeolocation } from './Items/getGeolocation'
 // import WebSocket from './Items/WebSocket'
 
@@ -17,7 +18,8 @@ export default class DomControl {
     this.addMenu = new AddMenu()
     this.lazy = new LazyLoader()
     this.ws = new WebSocket("ws:" +  host.split(":")[1] +":" + (this.port + 1) + "?test=test")
-    this.upMenu = new UpMenu()
+    this.category = new CategoryInterface(this.filterCategory, this.getMessages)
+    this.upMenu = new UpMenu(this.categoryMenu)
     this.videoBtn = document.querySelector('.bot__video')
     this.audioBtn = document.querySelector('.bot__audio')
     this.positionBtn = document.querySelector('.bot__position')
@@ -26,7 +28,8 @@ export default class DomControl {
     this.listeners()
     this.getMessages(true)
     // this.onVideo()
-    getGeolocation((pos) => console.log(pos))
+    // getGeolocation((pos) => console.log(pos))
+    // this.categoryMenu()
 
     
 
@@ -56,7 +59,11 @@ export default class DomControl {
       messageForm.append('message', event.target.value)
       fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: messageForm })
         .then(() => {this.ws.send("update") })
+      
       event.target.value = ''
+      if ( document.querySelector('.category__menu')){
+        this.categoryMenu()
+      }
     }
   }
 
@@ -65,6 +72,7 @@ export default class DomControl {
     fetch(this.host + ":" + this.port + '/messages')
       .then((response) => response.json())
       .then((response) => {
+        this.clearMessages()
         this.lazy.addMessages(response.messages)
         const dataForDraw = this.lazy.getMessages()
         dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
@@ -112,6 +120,9 @@ export default class DomControl {
         .then((response) => {
           this.ws.send("update")
           this.label.remove()
+          if ( document.querySelector('.category__menu')){
+            this.categoryMenu()
+          }
         })
       }
 
@@ -136,6 +147,7 @@ export default class DomControl {
 
   // фильтр
   filter = (event) => {
+
     console.log(event.key);
     if (event.key === "Enter"){
       const param = event.target.value
@@ -144,6 +156,7 @@ export default class DomControl {
         .then((response) => {
           this.lazy.addMessages(response.messages)
           const dataForDraw = this.lazy.getMessages()
+          this.lazy.messages = []
           this.clearMessages()
           dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
         })
@@ -296,5 +309,27 @@ export default class DomControl {
     this.videoStreamELement.muted = true
     this.videoStreamELement.autoplay = true
     document.body.appendChild(this.videoStreamELement)
+  }
+
+  categoryMenu = async () => {
+
+    if (document.querySelector('.category__menu')){
+      this.category.clear()
+    }    
+      const data = await fetch(this.host + ":" + this.port + '/messages/category')
+        .then((response) => response.json())
+        .then((response) => response.messages)
+      console.log(data);
+      this.category.createDom(data, document.querySelector('.bot__wrapper'))
+
+  }
+
+  filterCategory = async (filter) => {
+    const data = await fetch(this.host + ":" + this.port + `/messages/category/filter?filter=${filter}`)
+    .then((response) => response.json())
+    .then((response) => response.messages)
+    this.lazy.messages = []
+    this.clearMessages()
+    data.forEach((message) => drawMessage(message, this.bot))
   }
 }

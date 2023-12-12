@@ -50,7 +50,7 @@ body {
 
  .bot__menu{
   position: absolute;
-  right: 15px;
+  right: 30px;
   top: 10px;
   border: 1px skyblue none;
   border-radius: 30%;
@@ -236,4 +236,43 @@ body {
   right: 0;
   background-color: rgba(36, 77, 226, 0.1);
 
+}
+
+
+.category__menu{
+  position: absolute;
+  top: 10px;
+  right: -150px;
+  padding: 20px;
+  padding-top: 5px;
+
+  border: 1px solid rgba(36, 77, 226, 0.8) ;
+  border-radius: 10px;
+  background-color: rgba(36, 77, 226, 0.3)
+}
+
+
+.category__item{
+  padding: 5px;
+  display: flex;
+  justify-content: space-around;
+  cursor: pointer;
+}
+
+.category__count{
+  margin-left: 10px;
+  padding: 0 5px;
+  border: 1px solid yellow;
+  border-radius: 25%;
+  
+  
+}
+
+
+.category__close{
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: red;
+  font-size: 12px;
 }

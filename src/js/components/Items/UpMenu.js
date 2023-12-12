@@ -1,9 +1,13 @@
+import CategoryInterface from "./CategoryInterface"
+
 export default class UpMenu {
-    constructor () {
+    constructor (categoryCallback) {
       this.place = document.querySelector('.bot__wrapper')
       this.menu = null
       this.findInterfaces = null
       this.findClose = null
+      // this.category = new CategoryInterface()
+      this.categoryCallback = categoryCallback
       this.place.insertAdjacentElement("afterbegin", this.createAddMenu())
       this.findMessageInterfaces()
     }
@@ -22,6 +26,10 @@ export default class UpMenu {
     const type = document.createElement('span')
     type.className = 'up__type'
     type.textContent = 'Категории'
+    type.addEventListener('click',() => {
+      this.menu.classList.toggle('hidden')
+      this.categoryCallback()
+    })
     
     this.menu = menu
     menu.append(find, type)
@@ -57,6 +65,7 @@ export default class UpMenu {
       this.menu.classList.toggle('hidden')
 
     }
+
 
 
 }
