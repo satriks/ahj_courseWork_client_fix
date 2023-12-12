@@ -30,6 +30,7 @@ body {
 
  .bot__input-control{
   display: flex;
+  align-items: center;
 
  }
 
@@ -104,6 +105,7 @@ body {
   width: 100px;
   border: 1px solid rgba(36, 77, 226, 0.8) ;
   border-radius: 3px;
+  z-index: 5;
 
  }
 
@@ -112,6 +114,7 @@ body {
   color: beige;
   border-radius: 3px;
   text-align: center;
+  z-index: 5;
  }
 
  .message:last-child{
@@ -142,9 +145,6 @@ body {
   z-index: 2;
 }
 
-.capture__input{
-
-}
 
 .capture__btn{
   width: 100%;
@@ -157,8 +157,12 @@ body {
   width: 250px;
 }
 
-
-
+.capture__close{
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: red;
+}
 
 .message__text{
   margin-top: 10px;
@@ -191,4 +195,45 @@ body {
 
 .hidden {
   display: none;
+}
+
+.timeline__stream{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bot__audio, .bot__video, .bot__position{
+  position: relative;
+}
+
+.bot__audio:hover::after{
+  content: "Запись аудио";
+  position: absolute;
+  width: 100px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+
+}
+.bot__video:hover::after{
+  content: "Запись видео";
+  position: absolute;
+  width: 100px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+
+}
+.bot__position:hover::after{
+  content: "Геопозиция";
+  position: absolute;
+  width: 100px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+
 }

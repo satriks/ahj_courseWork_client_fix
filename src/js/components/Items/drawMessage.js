@@ -29,6 +29,12 @@ export default function drawMessage (data, bot, scroll = false, history = false)
       messageContent.setAttribute('controls', 'controls')
     } 
 
+    if (data.type && data.type.startsWith('other')) {
+      messageContent = document.createElement('span')
+      messageContent.innerHTML = `Файл : <a href="${data.file}">${data.file}</a>`
+
+    } 
+
     
     else {
       const links = data.text.match(/http[^\s]+/gm)
@@ -48,7 +54,7 @@ export default function drawMessage (data, bot, scroll = false, history = false)
 
     console.log(data.type);
 
-    data.type ? message.append(messageContent, fileText, messageTime) : message.append(messageContent, messageTime)
+    data.file ? message.append(messageContent, fileText, messageTime) : message.append(messageContent, messageTime)
 
     if (history) {
       console.log("Отрисовка вначале");

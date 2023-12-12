@@ -27,14 +27,18 @@ export default function createDom (element) {
   buttonAudio.textContent = '🎤'
 
   const buttonVideo = document.createElement('button')
-  buttonVideo.className = 'bot__audio'
+  buttonVideo.className = 'bot__video'
   buttonVideo.textContent = '📹'
+
+  const buttonPosition = document.createElement('button')
+  buttonPosition.className = 'bot__position'
+  buttonPosition.textContent = "🔘" 
 
   const botMenu = document.createElement('button')
   botMenu.className = 'bot__menu'
   botMenu.textContent = '︙'
 
-  inputControl.append(buttonAdd, botInput, buttonAudio, buttonVideo)
+  inputControl.append(buttonAdd, botInput, buttonAudio, buttonVideo, buttonPosition)
   wrapper.append(bot, inputFile, inputControl, botMenu)
 
   element.appendChild(wrapper)

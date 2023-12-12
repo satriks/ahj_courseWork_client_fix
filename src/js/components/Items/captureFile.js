@@ -34,8 +34,12 @@ export default function captureFile (data){
     capture__btn.className = 'capture__btn'
     capture__btn.textContent = "Отправить"
 
+    const close = document.createElement('button');
+    close.className = 'capture__close'
+    close.textContent = 'X'
+
     
-    capture__wrapper.append(textArea, capture__btn)
+    capture__wrapper.append(textArea, capture__btn, close)
 
     fileCapture.append(messageContent, capture__wrapper)
 

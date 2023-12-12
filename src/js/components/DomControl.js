@@ -4,6 +4,7 @@ import AddMenu from './Items/addMenu'
 import LazyLoader from './Items/lazyLoader'
 import UpMenu from './Items/UpMenu'
 import captureFile from './Items/captureFile'
+import { getGeolocation } from './Items/getGeolocation'
 // import WebSocket from './Items/WebSocket'
 
 export default class DomControl {
@@ -17,8 +18,15 @@ export default class DomControl {
     this.lazy = new LazyLoader()
     this.ws = new WebSocket("ws:" +  host.split(":")[1] +":" + (this.port + 1) + "?test=test")
     this.upMenu = new UpMenu()
+    this.videoBtn = document.querySelector('.bot__video')
+    this.audioBtn = document.querySelector('.bot__audio')
+    this.positionBtn = document.querySelector('.bot__position')
+    
+
     this.listeners()
     this.getMessages(true)
+    // this.onVideo()
+    getGeolocation((pos) => console.log(pos))
 
     
 
@@ -35,6 +43,9 @@ export default class DomControl {
     this.ws.addEventListener('message', (message) => {drawMessage(JSON.parse(message.data), this.bot, true)})
     this.upMenu.findInterfaces.querySelector('.find__input').addEventListener('keydown', this.filter)
     this.upMenu.findInterfaces.querySelector('.find__close').addEventListener('click', this.clearFilter)
+    this.videoBtn.addEventListener('click', this.onVideo)
+    this.audioBtn.addEventListener('click', this.onAudio)
+    this.positionBtn.addEventListener('click', this.onPosition)
   }
 
   //listener для текстового сообщения
@@ -94,15 +105,20 @@ export default class DomControl {
     const data = new FormData()
     data.append('file', file)
     this.label = captureFile(file)
-    document.querySelector('.bot__wrapper').insertAdjacentElement('afterbegin', this.label )
-    document.querySelector('.capture__btn').addEventListener('click', () => {
+
+    const send = () => {
       data.append('text', document.querySelector('.capture__input').value)
       fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: data })
         .then((response) => {
           this.ws.send("update")
           this.label.remove()
         })
-    })
+      }
+
+    document.querySelector('.bot__wrapper').insertAdjacentElement('afterbegin', this.label )
+    document.querySelector('.capture__close').addEventListener('click', () =>{this.label.remove()})
+    document.querySelector('.capture__btn').addEventListener('click', send)
+    document.querySelector('.capture__input').addEventListener('keydown', (evt) => { if (evt.key === "Enter") {send()}})
 
   }
   // Listener на скрол для ленивой загрузки
@@ -142,5 +158,143 @@ export default class DomControl {
     this.clearMessages()
     this.lazy.messages = []
     this.getMessages()
+  }
+  //Запись видео 
+  onVideo = async (event) => {
+    if (event.target.classList.contains("record")) {
+      this.stream.getTracks().forEach((track) => track.stop())
+      this.recorder.stop()
+      return
+    }
+
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    }).catch((err) => {
+      // not granted
+      this.accessesForm()
+
+    })
+
+   
+    this.stream = stream
+
+    const recorder = new MediaRecorder(stream)
+    this.recorder = recorder
+    
+    const chunks = []
+   
+    this.liveStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    }).then((stream) => {
+      this.videoStream()
+      this.videoStreamELement.srcObject = stream
+      return stream
+    }).catch((err) => {
+      // not granted
+    })
+
+
+    recorder.addEventListener('start', () => {
+      console.log('start record')
+      this.videoBtn.classList.add('record')
+      this.videoBtn.textContent = '⏸'
+
+    })
+
+    recorder.addEventListener('dataavailable', (event) => {
+      chunks.push(event.data)
+    })
+
+    recorder.addEventListener('stop', () => {
+      this.videoBtn.classList.remove('record')
+      this.videoBtn.textContent = '📹'
+      this.liveStream.getTracks().forEach((track) => track.stop())
+      if (this.videoStreamELement) {
+        this.videoStreamELement.remove()
+      }
+      const blob = new Blob(chunks)
+      const file = new File([blob], 'video', {type: "video"})
+      console.log(file);
+      this.sendFile(file)
+     
+    })
+    recorder.start()
+
+
+  }
+  //Запись аудио
+  onAudio = async (event) => {
+    if (event.target.classList.contains("record")) {
+      this.stream.getTracks().forEach((track) => track.stop())
+      this.recorder.stop()
+      return
+    }
+
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      // video: true,
+      audio: true
+    }).catch((err) => {
+      // not granted
+      this.accessesForm()
+
+    })
+
+   
+    this.stream = stream
+
+    const recorder = new MediaRecorder(stream)
+    this.recorder = recorder
+    
+    const chunks = []
+   
+
+    recorder.addEventListener('start', () => {
+      console.log('start record')
+      this.audioBtn.classList.add('record')
+      this.audioBtn.textContent = '⏸'
+
+    })
+
+    recorder.addEventListener('dataavailable', (event) => {
+      chunks.push(event.data)
+    })
+
+    recorder.addEventListener('stop', () => {
+      this.audioBtn.classList.remove('record')
+      this.audioBtn.textContent = '🎤'
+
+      const blob = new Blob(chunks)
+      const file = new File([blob], 'video', {type: "audio"})
+      console.log(file);
+      this.sendFile(file)
+     
+    })
+    recorder.start()
+
+
+  }
+  //Геолокация
+  onPosition = () => {
+    getGeolocation( (position) => {
+      if (position){
+        const messageForm = new FormData()
+        messageForm.append('message', ` Текущая геопозиция: ${position}`)
+        fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: messageForm })
+          .then(() => {this.ws.send("update") })
+
+      }
+    })
+  }
+  //livestream при записи 
+  videoStream = (stream) => {
+    this.videoStreamELement = document.createElement('video')
+    this.videoStreamELement.className = 'timeline__stream'
+    this.videoStreamELement.muted = true
+    this.videoStreamELement.autoplay = true
+    document.body.appendChild(this.videoStreamELement)
   }
 }
