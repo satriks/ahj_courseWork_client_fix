@@ -44,6 +44,7 @@ export default class UpMenu {
       const findInputWrapper = document.createElement('div')
       findInputWrapper.className = 'find__wrapper hidden'
       
+      
       const findInput = document.createElement('input')
       findInput.className='find__input '
       findInput.placeholder = 'Введите текст для поиска'
@@ -61,6 +62,12 @@ export default class UpMenu {
 
     }
     findMessage = () => {
+      const pinArea = document.querySelector('.pin__area')
+      if (pinArea){
+        const {height} = pinArea.getBoundingClientRect()
+        this.findInterfaces.style.top = height + 10 + 'px'
+      }
+      else{this.findInterfaces.style.top = 10 + 'px'}
       this.findInterfaces.classList.toggle('hidden')
       this.menu.classList.toggle('hidden')
 

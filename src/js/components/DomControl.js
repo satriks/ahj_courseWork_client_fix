@@ -20,9 +20,12 @@ export default class DomControl {
     this.ws = new WebSocket("ws:" +  host.split(":")[1] +":" + (this.port + 1) + "?test=test")
     this.category = new CategoryInterface(this.filterCategory, this.getMessages)
     this.upMenu = new UpMenu(this.categoryMenu)
+    this.pin = null
     this.videoBtn = document.querySelector('.bot__video')
     this.audioBtn = document.querySelector('.bot__audio')
     this.positionBtn = document.querySelector('.bot__position')
+    drawMessage.pinned = this.pinned
+    // console.log(drawMessage.pinned);
     
 
     this.listeners()
@@ -75,7 +78,13 @@ export default class DomControl {
         this.clearMessages()
         this.lazy.addMessages(response.messages)
         const dataForDraw = this.lazy.getMessages()
-        dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
+        dataForDraw.forEach((message) => {  drawMessage(message, this.bot, scroll, true) })
+        if (this.pin){
+          this.pin.classList.remove('pin__message')
+          const pinMessage = [...this.bot.children].find((message) => message.id === this.pin.id)
+          // debugger
+          this.pinned(pinMessage)
+        }
       })
       .catch((error) => {
         console.log(error)
@@ -154,10 +163,11 @@ export default class DomControl {
       fetch(this.host + ":" + this.port + '/messages/filter?filter=' + param)
         .then((response) => response.json())
         .then((response) => {
-          this.lazy.addMessages(response.messages)
-          const dataForDraw = this.lazy.getMessages()
+          event.target.closest(".find__wrapper").style.top = 10 + "px"
           this.lazy.messages = []
           this.clearMessages()
+          this.lazy.addMessages(response.messages)
+          const dataForDraw = this.lazy.getMessages()
           dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
         })
         .catch((error) => {
@@ -332,4 +342,45 @@ export default class DomControl {
     this.clearMessages()
     data.forEach((message) => drawMessage(message, this.bot))
   }
+
+  pinned = (message) => {
+
+    // if (this.pin === message) {
+    //   this.pinPlace.insertAdjacentElement("afterend", this.pin)
+    //   this.pinPlace.remove()
+    //   return
+    // }
+
+    if (this.pin) {
+      this.pinPlace.insertAdjacentElement("afterend", this.pin)
+      this.pinPlace.remove()
+      this.pin.classList.remove("pin__message")
+      this.pinArea.remove()
+      if (document.querySelector('.find__wrapper') && !document.querySelector('.find__wrapper').classList.contains("hidden")){
+        document.querySelector('.find__wrapper').style.top = 10 + "px"
+      }
+      if (this.pin === message ) {
+        this.pin = null
+        return
+      }
+        
+    }
+
+    const pinPlace = document.createElement('div')
+    pinPlace.className ="'pin__place"
+    this.pinPlace = pinPlace
+
+    message.insertAdjacentElement("beforebegin", pinPlace)
+    console.log("pinned");
+    this.pin = message
+    console.log(this.pin);
+    this.pinArea = document.createElement('div')
+    this.pinArea.className = 'pin__area'
+    this.bot.insertAdjacentElement("afterbegin", this.pinArea)
+    message.classList.add("pin__message")
+
+    this.pinArea.append(message)
+  }
+
+
 }

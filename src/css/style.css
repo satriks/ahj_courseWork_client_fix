@@ -63,6 +63,7 @@ body {
   flex-direction: column;
   border-radius: 10px;
   padding: 5px;
+  /* min-height: 60px; */
   
   border: 1px solid blue;
   width: auto;
@@ -105,16 +106,16 @@ body {
   width: 100px;
   border: 1px solid rgba(36, 77, 226, 0.8) ;
   border-radius: 3px;
-  z-index: 5;
+  z-index: 6;
 
  }
 
- .up__menu > span {
+ .up__menu  span {
   background-color: rgba(36, 77, 226, 0.8);
   color: beige;
   border-radius: 3px;
   text-align: center;
-  z-index: 5;
+  z-index: 6;
  }
 
  .message:last-child{
@@ -134,6 +135,7 @@ body {
   border: 1px solid rgba(36, 77, 226, 0.8);
   border-radius: 10px;
   padding-top: 20px;
+  z-index: 5;
 }
 
 
@@ -275,4 +277,103 @@ body {
   right: 0;
   color: red;
   font-size: 12px;
+}
+
+.message__control{
+  position: absolute;
+  /* background-color: rgba(36, 77, 226, 0.3); */
+  border-radius: 20px 0 0 20px;
+  top: 0;
+  left: -20px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+
+
+}
+
+.message__download, .message__pin, .message__favorite{
+  font-size: 14px;
+  padding: 0;
+  align-self: center;
+}
+
+.message__favorite, .message__download{
+  font-size: 18px;
+  
+}
+
+.message__download:hover::after{
+  content: "Скачать файл";
+  position: absolute;
+  width: 100px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+}
+.message__pin:hover::after{
+  content: "Закрепить сообщение";
+  position: absolute;
+  width: 150px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+}
+.message__favorite:hover::after{
+  content: "Добавить в избранное";
+  position: absolute;
+  width: 150px;
+  font-size: 10px;
+  top: -20px;
+  right: 0;
+  background-color: rgba(36, 77, 226, 0.1);
+}
+
+
+
+
+.message{
+  position: relative;
+}
+
+.pin__area{
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+
+  background-color: rgba(237, 239, 248, 0.945);
+  z-index: 5;
+}
+
+.pin__message{
+  position: relative;
+}
+
+.pin__message > video{
+  height: 150px;
+  width: auto;
+}
+
+.pin__message > img{
+  height: 150px;
+  width: auto;
+  
+}
+
+.pin__area > .pin__message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+
+}
+
+.pin__message > .message__content{
+  justify-self: flex-start;
 }
