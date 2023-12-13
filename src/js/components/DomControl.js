@@ -17,7 +17,7 @@ export default class DomControl {
     this.bot = document.querySelector('.bot')
     this.addMenu = new AddMenu()
     this.lazy = new LazyLoader()
-    this.ws = new WebSocket("ws:" +  host.split(":")[1] +":" + (this.port + 1) + "?test=test")
+    this.ws = new WebSocket('ws:' + host.split(':')[1] + ':' + (this.port + 1) + '?test=test')
     this.category = new CategoryInterface(this.filterCategory, this.getMessages)
     this.upMenu = new UpMenu(this.categoryMenu)
     this.pin = null
@@ -25,19 +25,15 @@ export default class DomControl {
     this.audioBtn = document.querySelector('.bot__audio')
     this.positionBtn = document.querySelector('.bot__position')
     drawMessage.pinned = this.pinned
-    drawMessage.host = this.host + ":" + this.port
-    this.upMenu.host = this.host + ":" + this.port
+    drawMessage.host = this.host + ':' + this.port
+    this.upMenu.host = this.host + ':' + this.port
     // console.log(drawMessage.pinned);
-    
 
     this.listeners()
     this.getMessages(true)
     // this.onVideo()
     // getGeolocation((pos) => console.log(pos))
     // this.categoryMenu()
-
-    
-
   }
 
   listeners = () => {
@@ -48,7 +44,7 @@ export default class DomControl {
     this.bot.addEventListener('dragover', (event) => { event.preventDefault() })
     this.bot.addEventListener('drop', this.onDrop)
     this.bot.addEventListener('scroll', this.lazyLoad)
-    this.ws.addEventListener('message', (message) => {drawMessage(JSON.parse(message.data), this.bot, true)})
+    this.ws.addEventListener('message', (message) => { drawMessage(JSON.parse(message.data), this.bot, true) })
     this.upMenu.findInterfaces.querySelector('.find__input').addEventListener('keydown', this.filter)
     this.upMenu.findInterfaces.querySelector('.find__close').addEventListener('click', this.clearFilter)
     this.videoBtn.addEventListener('click', this.onVideo)
@@ -56,32 +52,32 @@ export default class DomControl {
     this.positionBtn.addEventListener('click', this.onPosition)
   }
 
-  //listener для текстового сообщения
+  // listener для текстового сообщения
   inputMessage = (event) => {
     if (event.key === 'Enter' && event.target.value.trim()) {
       console.log(event.target.value)
       const messageForm = new FormData()
       messageForm.append('message', event.target.value)
-      fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: messageForm })
-        .then(() => {this.ws.send("update") })
-      
+      fetch(this.host + ':' + this.port + '/messages', { method: 'POST', body: messageForm })
+        .then(() => { this.ws.send('update') })
+
       event.target.value = ''
-      if ( document.querySelector('.category__menu')){
+      if (document.querySelector('.category__menu')) {
         this.categoryMenu()
       }
     }
   }
 
-  //получаем все сообщения 
+  // получаем все сообщения
   getMessages = (scroll = false) => {
-    fetch(this.host + ":" + this.port + '/messages')
+    fetch(this.host + ':' + this.port + '/messages')
       .then((response) => response.json())
       .then((response) => {
         this.clearMessages()
         this.lazy.addMessages(response.messages)
         const dataForDraw = this.lazy.getMessages()
-        dataForDraw.forEach((message) => {  drawMessage(message, this.bot, scroll, true) })
-        if (this.pin){
+        dataForDraw.forEach((message) => { drawMessage(message, this.bot, scroll, true) })
+        if (this.pin) {
           this.pin.classList.remove('pin__message')
           const pinMessage = [...this.bot.children].find((message) => message.id === this.pin.id)
           // debugger
@@ -93,11 +89,12 @@ export default class DomControl {
       })
   }
 
-  //очистка чата 
+  // очистка чата
   clearMessages () {
     [...this.bot.children].forEach(element => element.remove())
   }
-  // listener кнопки с плюсом 
+
+  // listener кнопки с плюсом
   handleAddMenu = () => {
     if (document.querySelector('.add__menu')) {
       this.addMenu.clearAddMenu()
@@ -105,6 +102,7 @@ export default class DomControl {
     }
     this.addMenu.createAddMenu()
   }
+
   // DnD
   onDrop = (event) => {
     event.preventDefault()
@@ -113,13 +111,14 @@ export default class DomControl {
       this.sendFile(file)
     }
   }
-  // получаем файл для отправки 
+
+  // получаем файл для отправки
   catchFile = (event) => {
     const file = document.querySelector('.bot__input-file').files[0]
     this.sendFile(file)
   }
 
-  // Отправка файла и отрисовка в чате 
+  // Отправка файла и отрисовка в чате
   sendFile = (file) => {
     const data = new FormData()
     data.append('file', file)
@@ -127,27 +126,27 @@ export default class DomControl {
 
     const send = () => {
       data.append('text', document.querySelector('.capture__input').value)
-      fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: data })
+      fetch(this.host + ':' + this.port + '/messages', { method: 'POST', body: data })
         .then((response) => {
-          this.ws.send("update")
+          this.ws.send('update')
           this.label.remove()
-          if ( document.querySelector('.category__menu')){
+          if (document.querySelector('.category__menu')) {
             this.categoryMenu()
           }
         })
-      }
+    }
 
-    document.querySelector('.bot__wrapper').insertAdjacentElement('afterbegin', this.label )
-    document.querySelector('.capture__close').addEventListener('click', () =>{this.label.remove()})
+    document.querySelector('.bot__wrapper').insertAdjacentElement('afterbegin', this.label)
+    document.querySelector('.capture__close').addEventListener('click', () => { this.label.remove() })
     document.querySelector('.capture__btn').addEventListener('click', send)
-    document.querySelector('.capture__input').addEventListener('keydown', (evt) => { if (evt.key === "Enter") {send()}})
-
+    document.querySelector('.capture__input').addEventListener('keydown', (evt) => { if (evt.key === 'Enter') { send() } })
   }
+
   // Listener на скрол для ленивой загрузки
   lazyLoad = () => {
     try {
       const lastElement = this.bot.children[1].offsetTop
-      const currentY = this.bot.scrollTop 
+      const currentY = this.bot.scrollTop
       if ((lastElement + 200) > currentY) {
         this.lazy.getMessages().forEach(message => { if (message) { drawMessage(message, this.bot, false, true) } })
       }
@@ -158,14 +157,13 @@ export default class DomControl {
 
   // фильтр
   filter = (event) => {
-
-    console.log(event.key);
-    if (event.key === "Enter"){
+    console.log(event.key)
+    if (event.key === 'Enter') {
       const param = event.target.value
-      fetch(this.host + ":" + this.port + '/messages/filter?filter=' + param)
+      fetch(this.host + ':' + this.port + '/messages/filter?filter=' + param)
         .then((response) => response.json())
         .then((response) => {
-          event.target.closest(".find__wrapper").style.top = 10 + "px"
+          event.target.closest('.find__wrapper').style.top = 10 + 'px'
           this.lazy.messages = []
           this.clearMessages()
           this.lazy.addMessages(response.messages)
@@ -179,37 +177,35 @@ export default class DomControl {
   }
 
   clearFilter = () => {
-    this.upMenu.findInterfaces.classList.add("hidden")
+    this.upMenu.findInterfaces.classList.add('hidden')
     this.clearMessages()
     this.lazy.messages = []
     this.getMessages()
   }
-  //Запись видео 
+
+  // Запись видео
   onVideo = async (event) => {
-    if (event.target.classList.contains("record")) {
+    if (event.target.classList.contains('record')) {
       this.stream.getTracks().forEach((track) => track.stop())
       this.recorder.stop()
       return
     }
 
-
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true
     }).catch((err) => {
+      console.log(err)
       // not granted
-      this.accessesForm()
-
     })
 
-   
     this.stream = stream
 
     const recorder = new MediaRecorder(stream)
     this.recorder = recorder
-    
+
     const chunks = []
-   
+
     this.liveStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true
@@ -218,15 +214,14 @@ export default class DomControl {
       this.videoStreamELement.srcObject = stream
       return stream
     }).catch((err) => {
+      console.log(err)
       // not granted
     })
-
 
     recorder.addEventListener('start', () => {
       console.log('start record')
       this.videoBtn.classList.add('record')
       this.videoBtn.textContent = '⏸'
-
     })
 
     recorder.addEventListener('dataavailable', (event) => {
@@ -241,48 +236,42 @@ export default class DomControl {
         this.videoStreamELement.remove()
       }
       const blob = new Blob(chunks)
-      console.log(blob);
-      const file = new File([blob], 'video.mp4', {type: "video"})
-      console.log(file);
+      console.log(blob)
+      const file = new File([blob], 'video.mp4', { type: 'video' })
+      console.log(file)
       this.sendFile(file)
-     
     })
     recorder.start()
-
-
   }
-  //Запись аудио
+
+  // Запись аудио
   onAudio = async (event) => {
-    if (event.target.classList.contains("record")) {
+    if (event.target.classList.contains('record')) {
       this.stream.getTracks().forEach((track) => track.stop())
       this.recorder.stop()
       return
     }
 
-
     const stream = await navigator.mediaDevices.getUserMedia({
       // video: true,
       audio: true
     }).catch((err) => {
+      console.log(err)
       // not granted
       this.accessesForm()
-
     })
 
-   
     this.stream = stream
 
     const recorder = new MediaRecorder(stream)
     this.recorder = recorder
-    
+
     const chunks = []
-   
 
     recorder.addEventListener('start', () => {
       console.log('start record')
       this.audioBtn.classList.add('record')
       this.audioBtn.textContent = '⏸'
-
     })
 
     recorder.addEventListener('dataavailable', (event) => {
@@ -294,28 +283,26 @@ export default class DomControl {
       this.audioBtn.textContent = '🎤'
 
       const blob = new Blob(chunks)
-      const file = new File([blob], 'audio.mp3', {type: "audio"})
-      console.log(file);
+      const file = new File([blob], 'audio.mp3', { type: 'audio' })
+      console.log(file)
       this.sendFile(file)
-     
     })
     recorder.start()
-
-
   }
-  //Геолокация
+
+  // Геолокация
   onPosition = () => {
-    getGeolocation( (position) => {
-      if (position){
+    getGeolocation((position) => {
+      if (position) {
         const messageForm = new FormData()
         messageForm.append('message', ` Текущая геопозиция: ${position}`)
-        fetch(this.host + ":" + this.port + '/messages', { method: 'POST', body: messageForm })
-          .then(() => {this.ws.send("update") })
-
+        fetch(this.host + ':' + this.port + '/messages', { method: 'POST', body: messageForm })
+          .then(() => { this.ws.send('update') })
       }
     })
   }
-  //livestream при записи 
+
+  // livestream при записи
   videoStream = (stream) => {
     this.videoStreamELement = document.createElement('video')
     this.videoStreamELement.className = 'timeline__stream'
@@ -324,79 +311,71 @@ export default class DomControl {
     document.body.appendChild(this.videoStreamELement)
   }
 
-  categoryMenu = async (favorite=false) => {
+  categoryMenu = async (favorite = false) => {
+    if (favorite) {
+      const data = await fetch(this.host + ':' + this.port + '/messages/favorite')
+        .then((res) => res.json())
+        .then(res => res.messages)
 
-    if (favorite){
-      const data = await fetch(this.host + ":" + this.port + "/messages/favorite")
-      .then((res) => res.json())
-      .then(res => res.messages)
-
-      
       this.lazy.messages = []
       this.clearMessages()
       data.forEach((message) => drawMessage(message, this.bot))
       const closeFavorite = document.createElement('button')
       closeFavorite.className = 'close__favorite'
-      closeFavorite.textContent = "Выйти из избранного"
+      closeFavorite.textContent = 'Выйти из избранного'
       closeFavorite.addEventListener('click', this.getMessages)
-      this.bot.insertAdjacentElement("afterbegin", closeFavorite)
-      
+      this.bot.insertAdjacentElement('afterbegin', closeFavorite)
+
       return
     }
 
-    if (document.querySelector('.category__menu')){
+    if (document.querySelector('.category__menu')) {
       this.category.clear()
-    }    
-      const data = await fetch(this.host + ":" + this.port + '/messages/category')
-        .then((response) => response.json())
-        .then((response) => response.messages)
-      console.log(data);
-      this.category.createDom(data, document.querySelector('.bot__wrapper'))
-
+    }
+    const data = await fetch(this.host + ':' + this.port + '/messages/category')
+      .then((response) => response.json())
+      .then((response) => response.messages)
+    console.log(data)
+    this.category.createDom(data, document.querySelector('.bot__wrapper'))
   }
 
   filterCategory = async (filter) => {
- 
-    const data = await fetch(this.host + ":" + this.port + `/messages/category/filter?filter=${filter}`)
-    .then((response) => response.json())
-    .then((response) => response.messages)
+    const data = await fetch(this.host + ':' + this.port + `/messages/category/filter?filter=${filter}`)
+      .then((response) => response.json())
+      .then((response) => response.messages)
     this.lazy.messages = []
     this.clearMessages()
     data.forEach((message) => drawMessage(message, this.bot))
   }
 
   pinned = (message) => {
-
     if (this.pin) {
-      this.pinPlace.insertAdjacentElement("afterend", this.pin)
+      this.pinPlace.insertAdjacentElement('afterend', this.pin)
       this.pinPlace.remove()
-      this.pin.classList.remove("pin__message")
+      this.pin.classList.remove('pin__message')
       this.pinArea.remove()
-      if (document.querySelector('.find__wrapper') && !document.querySelector('.find__wrapper').classList.contains("hidden")){
-        document.querySelector('.find__wrapper').style.top = 10 + "px"
+      if (document.querySelector('.find__wrapper') && !document.querySelector('.find__wrapper').classList.contains('hidden')) {
+        document.querySelector('.find__wrapper').style.top = 10 + 'px'
       }
-      if (this.pin === message ) {
+      if (this.pin === message) {
         this.pin = null
         return
       }
-        
     }
 
     const pinPlace = document.createElement('div')
-    pinPlace.className ="'pin__place"
+    pinPlace.className = "'pin__place"
     this.pinPlace = pinPlace
 
-    message.insertAdjacentElement("beforebegin", pinPlace)
-    console.log("pinned");
+    message.insertAdjacentElement('beforebegin', pinPlace)
+    console.log('pinned')
     this.pin = message
-    console.log(this.pin);
+    console.log(this.pin)
     this.pinArea = document.createElement('div')
     this.pinArea.className = 'pin__area'
-    this.bot.insertAdjacentElement("afterbegin", this.pinArea)
-    message.classList.add("pin__message")
+    this.bot.insertAdjacentElement('afterbegin', this.pinArea)
+    message.classList.add('pin__message')
 
     this.pinArea.append(message)
   }
-
-
 }

@@ -32,7 +32,7 @@ export default function createDom (element) {
 
   const buttonPosition = document.createElement('button')
   buttonPosition.className = 'bot__position'
-  buttonPosition.textContent = "🔘" 
+  buttonPosition.textContent = '🔘'
 
   const botMenu = document.createElement('button')
   botMenu.className = 'bot__menu'

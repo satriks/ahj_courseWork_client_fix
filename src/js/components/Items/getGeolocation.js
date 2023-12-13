@@ -7,7 +7,7 @@ export async function getGeolocation (callback) {
         const res = `[${latitude}, ${longitude}]`
         callback(res)
       },
-      err => callback(null)
+      err => callback(null) // eslint-disable-line 
     )
   } else return null
 }

@@ -1,48 +1,45 @@
-export default function captureFile (data){
-    const fileCapture = document.createElement('div');
-    fileCapture.className = 'capture__file';
+export default function captureFile (data) {
+  const fileCapture = document.createElement('div')
+  fileCapture.className = 'capture__file'
 
-    let messageContent = document.createElement('span');
-    
+  let messageContent = document.createElement('span')
 
-    if (data.type && data.type.startsWith('image')) {
-        messageContent = document.createElement('img')
-        messageContent.src = URL.createObjectURL(data)
-      }
-  
-      if (data.type && data.type.startsWith('video')) {
-        messageContent = document.createElement('video')
-        messageContent.src = URL.createObjectURL(data)
-        messageContent.setAttribute('controls', 'controls')
-      }
-  
-      if (data.type && data.type.startsWith('audio')) {
-        messageContent = document.createElement('audio')
-        messageContent.src = URL.createObjectURL(data)
-        messageContent.setAttribute('controls', 'controls')
-     }
-     messageContent.className = 'capture__message'
+  if (data.type && data.type.startsWith('image')) {
+    messageContent = document.createElement('img')
+    messageContent.src = URL.createObjectURL(data)
+  }
 
-    const capture__wrapper = document.createElement('div')
-    capture__wrapper.className = "capture__wrapper"
+  if (data.type && data.type.startsWith('video')) {
+    messageContent = document.createElement('video')
+    messageContent.src = URL.createObjectURL(data)
+    messageContent.setAttribute('controls', 'controls')
+  }
 
-    const textArea = document.createElement('input');
-    textArea.className = 'capture__input'
-    textArea.placeholder = "Добавьте описание"
+  if (data.type && data.type.startsWith('audio')) {
+    messageContent = document.createElement('audio')
+    messageContent.src = URL.createObjectURL(data)
+    messageContent.setAttribute('controls', 'controls')
+  }
+  messageContent.className = 'capture__message'
 
-    const capture__btn = document.createElement('button');
-    capture__btn.className = 'capture__btn'
-    capture__btn.textContent = "Отправить"
+  const captureWrapper = document.createElement('div')
+  captureWrapper.className = 'capture__wrapper'
 
-    const close = document.createElement('button');
-    close.className = 'capture__close'
-    close.textContent = 'X'
+  const textArea = document.createElement('input')
+  textArea.className = 'capture__input'
+  textArea.placeholder = 'Добавьте описание'
 
-    
-    capture__wrapper.append(textArea, capture__btn, close)
+  const captureBtn = document.createElement('button')
+  captureBtn.className = 'capture__btn'
+  captureBtn.textContent = 'Отправить'
 
-    fileCapture.append(messageContent, capture__wrapper)
+  const close = document.createElement('button')
+  close.className = 'capture__close'
+  close.textContent = 'X'
 
-    return fileCapture
+  captureWrapper.append(textArea, captureBtn, close)
 
+  fileCapture.append(messageContent, captureWrapper)
+
+  return fileCapture
 }
