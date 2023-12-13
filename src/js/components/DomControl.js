@@ -27,13 +27,9 @@ export default class DomControl {
     drawMessage.pinned = this.pinned
     drawMessage.host = this.host + ':' + this.port
     this.upMenu.host = this.host + ':' + this.port
-    // console.log(drawMessage.pinned);
 
     this.listeners()
     this.getMessages(true)
-    // this.onVideo()
-    // getGeolocation((pos) => console.log(pos))
-    // this.categoryMenu()
   }
 
   listeners = () => {
@@ -55,7 +51,6 @@ export default class DomControl {
   // listener для текстового сообщения
   inputMessage = (event) => {
     if (event.key === 'Enter' && event.target.value.trim()) {
-      console.log(event.target.value)
       const messageForm = new FormData()
       messageForm.append('message', event.target.value)
       fetch(this.host + ':' + this.port + '/messages', { method: 'POST', body: messageForm })
@@ -80,7 +75,6 @@ export default class DomControl {
         if (this.pin) {
           this.pin.classList.remove('pin__message')
           const pinMessage = [...this.bot.children].find((message) => message.id === this.pin.id)
-          // debugger
           this.pinned(pinMessage)
         }
       })
@@ -157,7 +151,6 @@ export default class DomControl {
 
   // фильтр
   filter = (event) => {
-    console.log(event.key)
     if (event.key === 'Enter') {
       const param = event.target.value
       fetch(this.host + ':' + this.port + '/messages/filter?filter=' + param)
@@ -236,9 +229,7 @@ export default class DomControl {
         this.videoStreamELement.remove()
       }
       const blob = new Blob(chunks)
-      console.log(blob)
       const file = new File([blob], 'video.mp4', { type: 'video' })
-      console.log(file)
       this.sendFile(file)
     })
     recorder.start()
@@ -284,7 +275,6 @@ export default class DomControl {
 
       const blob = new Blob(chunks)
       const file = new File([blob], 'audio.mp3', { type: 'audio' })
-      console.log(file)
       this.sendFile(file)
     })
     recorder.start()
@@ -335,7 +325,6 @@ export default class DomControl {
     const data = await fetch(this.host + ':' + this.port + '/messages/category')
       .then((response) => response.json())
       .then((response) => response.messages)
-    console.log(data)
     this.category.createDom(data, document.querySelector('.bot__wrapper'))
   }
 
@@ -370,7 +359,6 @@ export default class DomControl {
     message.insertAdjacentElement('beforebegin', pinPlace)
     console.log('pinned')
     this.pin = message
-    console.log(this.pin)
     this.pinArea = document.createElement('div')
     this.pinArea.className = 'pin__area'
     this.bot.insertAdjacentElement('afterbegin', this.pinArea)

@@ -94,8 +94,6 @@ export default function drawMessage (data, bot, scroll = false, history = false)
     messageTime.className = 'message__time'
     messageTime.textContent = convertTimestampToDate(data.date)
 
-    console.log(data.type)
-
     data.file ? message.append(messageContent, fileText, messageTime) : message.append(messageContent, messageTime)
 
     if (history) {
@@ -104,9 +102,6 @@ export default function drawMessage (data, bot, scroll = false, history = false)
     } else { bot.append(message) }
 
     if (scroll) {
-      // console.log(43);
-      // console.log(bot.children[bot.children.length - 1]);
-      // bot.children[bot.children.length - 1].scrollIntoView(true)
       setTimeout(() => bot.lastChild.scrollIntoView(true), 300)
     }
   }

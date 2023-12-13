@@ -97,7 +97,6 @@ export default class CategoryInterface {
   }
 
   filter = (type) => {
-    console.log(type)
     this.filterCallback(type)
   }
 }
