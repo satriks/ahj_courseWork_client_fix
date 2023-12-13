@@ -3,18 +3,32 @@ import convertTimestampToDate from '../supportComponents/convertTimestamp'
 
 export default function drawMessage (data, bot, scroll = false, history = false) {
 
+  const downloadFile =  async (evt, file) => {
+
+    
+    let blob = await fetch(file).then(r => r.blob())
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.setAttribute('download', file)
+
+    document.body.append(anchor)
+
+    anchor.click()
+
+    anchor.remove()
+  
+  }
+
   if (data) {
-    // console.log(data);
-
-
     const messageControl = document.createElement('div');
     messageControl.className = 'message__control' 
     
 
-    // const download = document.createElement('button')
-    // download.className = 'message__download'
-    // download.textContent ="⬇"
-    // download.addEventListener('click', () => downloadFile(data))
+    const download = document.createElement('button')
+    download.className = 'message__download'
+    download.textContent ="⬇"
+    download.addEventListener('click', (evt) => downloadFile(evt, data.file))
 
     const pin = document.createElement('button')
     pin.className = 'message__pin' 
@@ -23,7 +37,16 @@ export default function drawMessage (data, bot, scroll = false, history = false)
 
     const favorite = document.createElement('button')
     favorite.className = 'message__favorite'
+    if (data.favorite) favorite.classList.add("message__favorite-active")
     favorite.textContent ="☆"
+    favorite.addEventListener('click', (event) => {
+      event.target.classList.toggle("message__favorite-active")
+      const id = event.target.closest('.message').id
+
+      fetch(drawMessage.host + "/message/" + id + "/favorite", { method: "PUT" })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+    })
 
 
     
@@ -77,7 +100,7 @@ export default function drawMessage (data, bot, scroll = false, history = false)
       // download.remove()
       message.append(messageControl)
     }
-    data.type === "message" ? messageControl.append(pin, favorite ) : messageControl.append(pin, favorite )
+    data.type === "message" ? messageControl.append(pin, favorite ) : messageControl.append(pin, favorite, download )
     messageContent.className = 'message__content'
     
     const messageTime = document.createElement('span')

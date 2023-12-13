@@ -203,6 +203,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10;
 }
 
 .bot__audio, .bot__video, .bot__position{
@@ -303,6 +304,12 @@ body {
   
 }
 
+.message__favorite-active{
+  background-color: greenyellow;
+  border-radius: 50%;
+  /* color: greenyellow */
+}
+
 .message__download:hover::after{
   content: "Скачать файл";
   position: absolute;
@@ -376,4 +383,14 @@ body {
 
 .pin__message > .message__content{
   justify-self: flex-start;
+}
+
+.close__favorite{
+  position: absolute;
+  top: 15px;
+  right: 70px;
+  font-size: 12px;
+  background-color: rgba(136, 150, 203, 0.4);
+  border-radius: 20px;
+
 }

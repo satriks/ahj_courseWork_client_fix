@@ -25,6 +25,8 @@ export default class DomControl {
     this.audioBtn = document.querySelector('.bot__audio')
     this.positionBtn = document.querySelector('.bot__position')
     drawMessage.pinned = this.pinned
+    drawMessage.host = this.host + ":" + this.port
+    this.upMenu.host = this.host + ":" + this.port
     // console.log(drawMessage.pinned);
     
 
@@ -239,7 +241,8 @@ export default class DomControl {
         this.videoStreamELement.remove()
       }
       const blob = new Blob(chunks)
-      const file = new File([blob], 'video', {type: "video"})
+      console.log(blob);
+      const file = new File([blob], 'video.mp4', {type: "video"})
       console.log(file);
       this.sendFile(file)
      
@@ -291,7 +294,7 @@ export default class DomControl {
       this.audioBtn.textContent = '🎤'
 
       const blob = new Blob(chunks)
-      const file = new File([blob], 'video', {type: "audio"})
+      const file = new File([blob], 'audio.mp3', {type: "audio"})
       console.log(file);
       this.sendFile(file)
      
@@ -321,7 +324,25 @@ export default class DomControl {
     document.body.appendChild(this.videoStreamELement)
   }
 
-  categoryMenu = async () => {
+  categoryMenu = async (favorite=false) => {
+
+    if (favorite){
+      const data = await fetch(this.host + ":" + this.port + "/messages/favorite")
+      .then((res) => res.json())
+      .then(res => res.messages)
+
+      
+      this.lazy.messages = []
+      this.clearMessages()
+      data.forEach((message) => drawMessage(message, this.bot))
+      const closeFavorite = document.createElement('button')
+      closeFavorite.className = 'close__favorite'
+      closeFavorite.textContent = "Выйти из избранного"
+      closeFavorite.addEventListener('click', this.getMessages)
+      this.bot.insertAdjacentElement("afterbegin", closeFavorite)
+      
+      return
+    }
 
     if (document.querySelector('.category__menu')){
       this.category.clear()
@@ -335,6 +356,7 @@ export default class DomControl {
   }
 
   filterCategory = async (filter) => {
+ 
     const data = await fetch(this.host + ":" + this.port + `/messages/category/filter?filter=${filter}`)
     .then((response) => response.json())
     .then((response) => response.messages)
@@ -344,12 +366,6 @@ export default class DomControl {
   }
 
   pinned = (message) => {
-
-    // if (this.pin === message) {
-    //   this.pinPlace.insertAdjacentElement("afterend", this.pin)
-    //   this.pinPlace.remove()
-    //   return
-    // }
 
     if (this.pin) {
       this.pinPlace.insertAdjacentElement("afterend", this.pin)

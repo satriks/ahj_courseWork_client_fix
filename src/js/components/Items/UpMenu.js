@@ -30,9 +30,17 @@ export default class UpMenu {
       this.menu.classList.toggle('hidden')
       this.categoryCallback()
     })
+
+    const favorite = document.createElement('span')
+    favorite.className = 'up__favorite'
+    favorite.textContent = 'Избранное'
+    favorite.addEventListener('click',() => {
+      this.menu.classList.toggle('hidden')
+      this.categoryCallback(true)
+    })
     
     this.menu = menu
-    menu.append(find, type)
+    menu.append(find, type, favorite)
 
     return menu
     }
