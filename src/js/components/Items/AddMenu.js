@@ -27,3 +27,4 @@ export default class AddMenu {
     document.querySelector('.bot__input-file').click()
   }
 }
+//test
