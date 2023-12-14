@@ -35,7 +35,7 @@ module.exports = {
     new FaviconsWebpackPlugin('./src/favicon.ico'),
     new webpack.ProvidePlugin({
       process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
+      Buffer: ['buffer', 'Buffer']
     })
 
   ]
