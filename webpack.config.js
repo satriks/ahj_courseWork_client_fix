@@ -32,11 +32,6 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
-    new FaviconsWebpackPlugin('./src/favicon.ico'),
-    new webpack.ProvidePlugin({
-      process: 'process/browser',
-      Buffer: ['buffer', 'Buffer']
-    })
 
   ]
 }
