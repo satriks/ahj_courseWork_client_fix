@@ -6,7 +6,7 @@ import UpMenu from './items/UpMenu'
 import captureFile from './items/captureFile'
 import CategoryInterface from './items/CategoryInterface'
 import { getGeolocation } from './items/getGeolocation'
-// import WebSocket from './Items/WebSocket'
+
 
 export default class DomControl {
   constructor (host) {
