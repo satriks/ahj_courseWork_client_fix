@@ -20,6 +20,7 @@ module.exports = {
     ]
   },
   resolve: {
+    modules: ['node_modules', 'src/js/components'],
     extensions: ['.tsx', '.ts', '.js']
   },
   plugins: [
