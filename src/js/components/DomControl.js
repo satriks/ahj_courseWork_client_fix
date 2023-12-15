@@ -7,7 +7,6 @@ import captureFile from './items/captureFile'
 import CategoryInterface from './items/CategoryInterface'
 import { getGeolocation } from './items/getGeolocation'
 
-
 export default class DomControl {
   constructor (host) {
     this.host = host
